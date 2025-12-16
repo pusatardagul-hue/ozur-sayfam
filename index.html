@@ -1,145 +1,134 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Özür Dilerim ❤️</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            background-color: #fff0f5;
-            overflow: hidden;
-            transition: background 0.5s;
-        }
+<meta charset="UTF-8">
+<title>Bir Özür</title>
 
-        #container {
-            text-align: center;
-            z-index: 10;
-        }
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ffd6e0, #ffeef2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
 
-        h1 {
-            color: #d63384;
-            font-size: 2rem;
-            margin-bottom: 30px;
-        }
+#container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    text-align: center;
+    animation: fadeIn 1.2s ease;
+}
 
-        .btn-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
+h1 {
+    margin-top: 40px;
+    color: #c0392b;
+    font-size: 32px;
+}
 
-        #yesBtn {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
+button {
+    font-size: 22px;
+    padding: 15px 35px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    position: absolute;
+    transition: all 0.5s ease;
+}
 
-        #noBtn {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+#yesBtn {
+    background-color: #2ecc71;
+    color: white;
+    left: 40%;
+    top: 55%;
+    transform: translate(-50%, -50%);
+}
 
-        #successMessage {
-            display: none;
-            padding: 40px;
-            font-size: 28px;
-            font-weight: bold;
-            color: #d63384;
-            line-height: 1.6;
-            animation: heartBeat 1.5s infinite;
-        }
+#noBtn {
+    background-color: #e74c3c;
+    color: white;
+    left: 60%;
+    top: 55%;
+    transform: translate(-50%, -50%);
+}
 
-        @keyframes heartBeat {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-    </style>
+#message {
+    display: none;
+    font-size: 28px;
+    color: #2c3e50;
+    padding: 40px;
+    animation: fadeIn 1.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+</style>
 </head>
+
 <body>
 
-    <div id="quiz">
-        <h1 id="questionText">Beni affedebilir misin? 🥺</h1>
-        <div class="btn-wrapper">
-            <button id="yesBtn" onclick="celebrate()">Evet</button>
-            <button id="noBtn" onclick="makeYesBigger()">Hayır</button>
-        </div>
-    </div>
+<div id="container">
+    <h1 id="title">Beni affeder misin? 💔</h1>
 
-    <div id="successMessage">
-        Biliyordum barışacağımızı... ❤️ <br>
+    <button id="yesBtn">Evet</button>
+    <button id="noBtn">Hayır</button>
+
+    <div id="message">
+        💖 Biliyordum barışacağımızı… <br><br>
         Tekrar birbirimize ihanet etmeden, <br>
-        güvenerek bir yola çıkalım. 🌹
+        güvenerek bir yola çıkalım 💫
     </div>
+</div>
 
-    <script>
-        let yesSize = 18;
-        let paddingSize = 15;
-        let noClickCount = 0;
+<script>
+/* İSİM OKUMA */
+const params = new URLSearchParams(window.location.search);
+const isim = params.get("isim");
 
-        function makeYesBigger() {
-            noClickCount++;
-            const yesBtn = document.getElementById('yesBtn');
-            const noBtn = document.getElementById('noBtn');
-            const question = document.getElementById('questionText');
+if (isim) {
+    document.getElementById("title").innerHTML =
+        isim + ", beni affeder misin? 💔";
+}
 
-            // Her hayırda Evet butonu katlanarak büyür
-            yesSize += 45; 
-            paddingSize += 25;
-            
-            yesBtn.style.fontSize = yesSize + 'px';
-            yesBtn.style.padding = paddingSize + 'px ' + (paddingSize * 2) + 'px';
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const message = document.getElementById("message");
 
-            // Hayır butonu yavaşça küçülür ve solar
-            let noOpacity = 1 - (noClickCount * 0.15);
-            noBtn.style.opacity = noOpacity;
-            noBtn.style.transform = `scale(${1 - (noClickCount * 0.1)})`;
+let noClickCount = 0;
 
-            // Şaka yollu mesajları değiştir (Opsiyonel)
-            if(noClickCount === 2) question.innerText = "Emin misin? ☹️";
-            if(noClickCount === 4) question.innerText = "Bir daha düşün derim... 💔";
-            if(noClickCount === 6) question.innerText = "Sanki parmağın yanlış yere gidiyor? 🧐";
+noBtn.addEventListener("click", () => {
+    noClickCount++;
 
-            // Hayır butonu artık ulaşılamaz olduğunda veya 7. tıklamada Evet her yeri kaplar
-            if (noClickCount >= 7) {
-                noBtn.style.display = 'none';
-                yesBtn.style.position = 'fixed';
-                yesBtn.style.top = '0';
-                yesBtn.style.left = '0';
-                yesBtn.style.width = '100vw';
-                yesBtn.style.height = '100vh';
-                yesBtn.style.zIndex = '9999';
-                yesBtn.style.borderRadius = '0';
-                yesBtn.innerText = "EVET DEMEK ZORUNDASIN ❤️";
-            }
-        }
+    noBtn.style.left = Math.random() * 80 + "%";
+    noBtn.style.top = Math.random() * 80 + "%";
 
-        function celebrate() {
-            document.getElementById('quiz').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'block';
-            document.body.style.backgroundColor = '#fff';
-        }
-    </script>
+    if (noClickCount >= 4) {
+        yesBtn.style.position = "fixed";
+        yesBtn.style.left = "0";
+        yesBtn.style.top = "0";
+        yesBtn.style.width = "100vw";
+        yesBtn.style.height = "100vh";
+        yesBtn.style.fontSize = "42px";
+        yesBtn.style.borderRadius = "0";
+        yesBtn.style.transform = "scale(1.05)";
+
+        noBtn.style.display = "none";
+    }
+});
+
+yesBtn.addEventListener("click", () => {
+    document.getElementById("title").style.display = "none";
+    yesBtn.style.display = "none";
+    noBtn.style.display = "none";
+    message.style.display = "block";
+});
+</script>
+
 </body>
 </html>
