@@ -21,13 +21,13 @@ body {
     height: 100%;
     position: relative;
     text-align: center;
-    animation: fadeIn 1.2s ease;
 }
 
 h1 {
     margin-top: 40px;
     color: #c0392b;
     font-size: 32px;
+    transition: all 0.4s ease;
 }
 
 button {
@@ -37,7 +37,8 @@ button {
     border-radius: 14px;
     cursor: pointer;
     position: absolute;
-    transition: all 0.5s ease;
+    transition: all 0.4s ease;
+    z-index: 10;
 }
 
 #yesBtn {
@@ -45,7 +46,7 @@ button {
     color: white;
     left: 40%;
     top: 55%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1);
 }
 
 #noBtn {
@@ -53,7 +54,7 @@ button {
     color: white;
     left: 60%;
     top: 55%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1);
 }
 
 #message {
@@ -61,17 +62,37 @@ button {
     font-size: 28px;
     color: #2c3e50;
     padding: 40px;
-    animation: fadeIn 1.5s ease;
+    max-width: 90%;
+    margin: auto;
+    white-space: pre-line;
+    position: relative;
+    z-index: 10;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+/* 💖 Kalpler */
+.heart {
+    position: fixed;
+    top: -20px;
+    font-size: 24px;
+    animation: fall linear forwards;
+    pointer-events: none;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh);
+        opacity: 0;
+    }
 }
 </style>
 </head>
 
 <body>
+
+<!-- 🎶 Arka Plan Müziği -->
+<audio id="bgMusic" loop>
+    <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_4c7c5e0f36.mp3" type="audio/mpeg">
+</audio>
 
 <div id="container">
     <h1 id="title">Beni affeder misin? 💔</h1>
@@ -79,18 +100,13 @@ button {
     <button id="yesBtn">Evet</button>
     <button id="noBtn">Hayır</button>
 
-    <div id="message">
-        💖 Biliyordum barışacağımızı… <br><br>
-        Tekrar birbirimize ihanet etmeden, <br>
-        güvenerek bir yola çıkalım 💫
-    </div>
+    <div id="message"></div>
 </div>
 
 <script>
-/* İSİM OKUMA */
+// 🔤 İsim parametresi
 const params = new URLSearchParams(window.location.search);
 const isim = params.get("isim");
-
 if (isim) {
     document.getElementById("title").innerHTML =
         isim + ", beni affeder misin? 💔";
@@ -98,16 +114,54 @@ if (isim) {
 
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
-const message = document.getElementById("message");
+const title = document.getElementById("title");
+const messageDiv = document.getElementById("message");
+const music = document.getElementById("bgMusic");
+
+const questions = [
+    "Emin misin? 😢",
+    "Tekrar soruyorum… 💔",
+    "Gerçekten mi? 😔",
+    "Son kararın mı? 💕"
+];
+
+const finalText =
+`💖 Biliyordum barışacağımızı...
+
+Tekrar birbirimize ihanet etmeden,
+güvenerek bir yola çıkalım 💫`;
 
 let noClickCount = 0;
+let yesScale = 1;
+let noScale = 1;
+let musicStarted = false;
+let heartInterval;
 
+// 🎶 Müziği başlat
+function startMusic() {
+    if (!musicStarted) {
+        music.play();
+        musicStarted = true;
+    }
+}
+
+// 💔 Hayır tıklaması
 noBtn.addEventListener("click", () => {
+    startMusic();
+
     noClickCount++;
 
-    noBtn.style.left = Math.random() * 80 + "%";
-    noBtn.style.top = Math.random() * 80 + "%";
+    // Soru değişsin
+    title.innerHTML = questions[Math.min(noClickCount - 1, questions.length - 1)];
 
+    // Ölçekler
+    yesScale += 0.3;
+    noScale -= 0.2;
+
+    yesBtn.style.transform = `translate(-50%, -50%) scale(${yesScale})`;
+    noBtn.style.transform = `translate(-50%, -50%) scale(${Math.max(noScale, 0.3)})`;
+
+    // 4. tıklamada evet full screen
     if (noClickCount >= 4) {
         yesBtn.style.position = "fixed";
         yesBtn.style.left = "0";
@@ -116,17 +170,46 @@ noBtn.addEventListener("click", () => {
         yesBtn.style.height = "100vh";
         yesBtn.style.fontSize = "42px";
         yesBtn.style.borderRadius = "0";
-        yesBtn.style.transform = "scale(1.05)";
 
         noBtn.style.display = "none";
     }
 });
 
+// ✍️ Daktilo efekti
+function typeWriter(text, element, speed = 45) {
+    let i = 0;
+    element.innerHTML = "";
+    element.style.display = "block";
+
+    const interval = setInterval(() => {
+        element.innerHTML += text.charAt(i);
+        i++;
+        if (i >= text.length) clearInterval(interval);
+    }, speed);
+}
+
+// 💖 Kalp oluştur
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.animationDuration = (3 + Math.random() * 3) + "s";
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 6000);
+}
+
+// ❤️ Evet tıklaması
 yesBtn.addEventListener("click", () => {
-    document.getElementById("title").style.display = "none";
+    startMusic();
+
+    title.style.display = "none";
     yesBtn.style.display = "none";
     noBtn.style.display = "none";
-    message.style.display = "block";
+
+    heartInterval = setInterval(createHeart, 300);
+    typeWriter(finalText, messageDiv, 45);
 });
 </script>
 
